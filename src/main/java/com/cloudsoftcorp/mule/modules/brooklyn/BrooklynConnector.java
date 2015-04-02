@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.http.HttpEntity;
+import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
@@ -20,6 +22,7 @@ import brooklyn.rest.domain.ApplicationSummary;
 import brooklyn.rest.domain.CatalogItemSummary;
 import brooklyn.rest.domain.EntitySummary;
 import brooklyn.rest.domain.SensorSummary;
+import brooklyn.rest.domain.TaskSummary;
 
 import com.cloudsoftcorp.mule.module.workaround.EntitySummaryWorkAround;
 import com.cloudsoftcorp.mule.modules.brooklyn.strategy.ConnectorConnectionStrategy;
@@ -65,8 +68,10 @@ public class BrooklynConnector {
 	 * @return jax-rs response object
 	 */
 	@Processor
-	public Integer createApplication(String yaml) {
-		return brooklynApi.getApplicationApi().createFromYaml(yaml).getStatus();
+	public TaskSummary createApplication(String yaml) {
+		@SuppressWarnings("unchecked")
+		BaseClientResponse<TaskSummary> response = (BaseClientResponse<TaskSummary>) brooklynApi.getApplicationApi().createFromYaml(yaml);
+		return response.getEntity(brooklyn.rest.domain.TaskSummary.class);
 	}
 
 	/**
@@ -86,12 +91,14 @@ public class BrooklynConnector {
 	public List<EntitySummary> getApplicationDescendantEntities(
 			@Default("#[mesage.payload.applicationId]") String applicationId,
 			@Default("#[message.payload.regex]") String regex) {
-		List<EntitySummary> listOfEntities = brooklynApi.getApplicationApi()
-				.getDescendants(applicationId, regex);
+		List<EntitySummary> listOfEntities = brooklynApi.getApplicationApi().getDescendants(applicationId, regex);
+		
 		List<EntitySummary> serializableEntities = new ArrayList<EntitySummary>();
+	
 		for (EntitySummary entity : listOfEntities) {
 			serializableEntities.add(new EntitySummaryWorkAround(entity));
 		}
+		
 		return serializableEntities;
 	}
 
@@ -110,10 +117,11 @@ public class BrooklynConnector {
 	}
 
 	@Processor
-	public Integer deleteApplication(
+	public TaskSummary deleteApplication(
 			@Default("#[message,payload]") String applicationId) {
-		return brooklynApi.getApplicationApi().delete(applicationId)
-				.getStatus();
+		@SuppressWarnings("unchecked")
+		BaseClientResponse<TaskSummary> response = (BaseClientResponse<TaskSummary>) brooklynApi.getApplicationApi().delete(applicationId);		
+		return response.getEntity(TaskSummary.class);
 	}
 
 	/*
@@ -150,8 +158,7 @@ public class BrooklynConnector {
 			@Default("#[message.payload.applicationId]") String applicationId,
 			@Default("#[message.payload.entityId]") String entityId,
 			@Default("#[message.payload.sensorId]") String sensorId) {
-		return brooklynApi.getSensorApi().get(applicationId, entityId,
-				sensorId, true);
+		return brooklynApi.getSensorApi().get(applicationId, entityId,sensorId, true);
 	}
 
 	@Processor
@@ -196,8 +203,7 @@ public class BrooklynConnector {
 	public List<CatalogItemSummary> getPoliciesCatalog(
 			@Default("#[message.payload.regularExpression]") String regularExpression,
 			@Default("#[message.payload.fragement]") String fragement) {
-		return brooklynApi.getCatalogApi().listPolicies(regularExpression,
-				fragement);
+		return brooklynApi.getCatalogApi().listPolicies(regularExpression,fragement);
 	}
 
 	@Processor
@@ -212,8 +218,7 @@ public class BrooklynConnector {
 	public List<CatalogItemSummary> getEntitiesCatalog(
 			@Default("#[message.payload.regularExpression]") String regularExpression,
 			@Default("#[message.payload.fragement]") String fragement) {
-		return brooklynApi.getCatalogApi().listEntities(regularExpression,
-				fragement);
+		return brooklynApi.getCatalogApi().listEntities(regularExpression, fragement);
 	}
 
 	@Processor
@@ -225,8 +230,9 @@ public class BrooklynConnector {
 	}
 
 	@Processor
-	public int addItemToCatalog(@Default("#[message.payload]") String yaml) {
-		return brooklynApi.getCatalogApi().create(yaml).getStatus();
+	public TaskSummary addItemToCatalog(@Default("#[message.payload]") String yaml) {
+		BaseClientResponse<TaskSummary> response = (BaseClientResponse<TaskSummary>) brooklynApi.getCatalogApi().create(yaml);		
+		return response.getEntity(TaskSummary.class);
 	}
 
 	@Processor
