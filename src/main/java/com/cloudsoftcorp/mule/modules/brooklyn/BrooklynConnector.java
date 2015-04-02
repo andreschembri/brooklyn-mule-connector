@@ -52,9 +52,9 @@ public class BrooklynConnector {
 	 * @return jax-rs response object
 	 */
 	@Processor
-	public Response createApplication(String policy) {
+	public Response createApplication(String yaml) {
 		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().createPoly(policy.getBytes());
+		return brooklynAPI.getApplicationApi().createFromYaml(yaml);
 	}
 
 	/**
@@ -84,6 +84,12 @@ public class BrooklynConnector {
 			@Default("#[message.payload]") String applicationId) {
 		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
 		return brooklynAPI.getApplicationApi().get(applicationId);
+	}
+	
+	@Processor
+	public Response deleteApplication(@Default("#[message,payload]") String applicationId){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getApplicationApi().delete(applicationId);
 	}
 
 }
