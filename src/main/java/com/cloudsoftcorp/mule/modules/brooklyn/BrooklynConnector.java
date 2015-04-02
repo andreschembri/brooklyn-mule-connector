@@ -18,6 +18,8 @@ import org.mule.api.annotations.param.Default;
 
 import brooklyn.rest.client.BrooklynApi;
 import brooklyn.rest.domain.ApplicationSummary;
+import brooklyn.rest.domain.EntitySummary;
+import brooklyn.rest.domain.SensorSummary;
 
 import com.cloudsoftcorp.mule.modules.brooklyn.strategy.ConnectorConnectionStrategy;
 
@@ -43,6 +45,15 @@ public class BrooklynConnector {
 	}
 	
 	
+	
+	
+	
+	/**
+	* Application API 
+	* 
+	*/
+	
+	
 	/**
 	 * Create new application from policy
 	 *
@@ -52,9 +63,9 @@ public class BrooklynConnector {
 	 * @return jax-rs response object
 	 */
 	@Processor
-	public Response createApplication(String yaml) {
+	public Integer createApplication(String yaml) {
 		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().createFromYaml(yaml);
+		return brooklynAPI.getApplicationApi().createFromYaml(yaml).getStatus();
 	}
 
 	/**
@@ -87,9 +98,30 @@ public class BrooklynConnector {
 	}
 	
 	@Processor
-	public Response deleteApplication(@Default("#[message,payload]") String applicationId){
+	public Integer deleteApplication(@Default("#[message,payload]") String applicationId) {
 		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
-		return brooklynApi.getApplicationApi().delete(applicationId);
+		return  brooklynApi.getApplicationApi().delete(applicationId).getStatus();
 	}
 
+	
+	
+	/*
+	 * Entities 
+	 */
+	
+	@Processor
+	public List<EntitySummary> getEntities(@Default("#[message.payload]") String applicationId){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getEntityApi().list(applicationId);
+	} 
+	
+	
+	/*
+	 * Entity Sensors
+	 */
+	public List<SensorSummary> getSensorSummary(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId ){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getSensorApi().list(applicationId, entityId);
+	}
+	 
 }
