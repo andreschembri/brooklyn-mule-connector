@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.glassfish.hk2.utilities.reflection.Logger;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
@@ -53,9 +52,9 @@ public class BrooklynConnector {
 	 * @return jax-rs response object
 	 */
 	@Processor
-	public Response createApplication(byte[] policy) {
+	public Response createApplication(String policy) {
 		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().createPoly(policy);
+		return brooklynAPI.getApplicationApi().createPoly(policy.getBytes());
 	}
 
 	/**
