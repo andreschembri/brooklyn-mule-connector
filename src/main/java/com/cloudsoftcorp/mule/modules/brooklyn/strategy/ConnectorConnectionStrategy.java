@@ -69,7 +69,6 @@ public class ConnectorConnectionStrategy {
         /*
          * CODE FOR CLOSING A CONNECTION GOES IN HERE
          */
-    	
     }
 
     /**

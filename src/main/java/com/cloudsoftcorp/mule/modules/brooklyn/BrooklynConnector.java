@@ -7,15 +7,12 @@ package com.cloudsoftcorp.mule.modules.brooklyn;
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
+import javax.annotation.PostConstruct;
 
-import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
-import org.mule.api.annotations.expressions.Lookup;
 import org.mule.api.annotations.param.Default;
-import org.mule.api.annotations.param.Optional;
 
 import brooklyn.rest.client.BrooklynApi;
 import brooklyn.rest.domain.ApplicationSummary;
@@ -45,7 +42,13 @@ public class BrooklynConnector {
 			ConnectorConnectionStrategy connectionStrategy) {
 		this.connectionStrategy = connectionStrategy;
 	}
+
 	
+	BrooklynApi brooklynApi;
+	@PostConstruct
+	public void init(){
+		 brooklynApi = connectionStrategy.getBrooklynAPI();
+	}
 	
 	
 	
@@ -66,8 +69,7 @@ public class BrooklynConnector {
 	 */
 	@Processor
 	public Integer createApplication(String yaml) {
-		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().createFromYaml(yaml).getStatus();
+		return brooklynApi.getApplicationApi().createFromYaml(yaml).getStatus();
 	}
 
 	/**
@@ -80,8 +82,7 @@ public class BrooklynConnector {
 	 */
 	@Processor
 	public List<ApplicationSummary> getApplications() {
-		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().list();
+		return brooklynApi.getApplicationApi().list();
 	}
 
 	/**
@@ -95,13 +96,11 @@ public class BrooklynConnector {
 	@Processor
 	public ApplicationSummary getApplication(
 			@Default("#[message.payload]") String applicationId) {
-		BrooklynApi brooklynAPI = connectionStrategy.getBrooklynAPI();
-		return brooklynAPI.getApplicationApi().get(applicationId);
+		return brooklynApi.getApplicationApi().get(applicationId);
 	}
 	
 	@Processor
 	public Integer deleteApplication(@Default("#[message,payload]") String applicationId) {
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return  brooklynApi.getApplicationApi().delete(applicationId).getStatus();
 	}
 
@@ -113,7 +112,6 @@ public class BrooklynConnector {
 	
 	@Processor
 	public List<EntitySummary> getEntities(@Default("#[message.payload]") String applicationId){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getEntityApi().list(applicationId);
 	} 
 	
@@ -121,28 +119,28 @@ public class BrooklynConnector {
 	/*
 	 * Entity Sensors
 	 */
+	@Processor
 	public List<SensorSummary> getSensors(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId ){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getSensorApi().list(applicationId, entityId);
 	}
 	
+	@Processor
 	public SensorSummary getSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return (SensorSummary) brooklynApi.getSensorApi().get(applicationId, entityId, sensorId, false);
 	}
-	 
+	
+	@Processor
 	public Object getSensorRawData(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getSensorApi().get(applicationId, entityId, sensorId, true);
 	}
 	
+	@Processor
 	public void deleteSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		brooklynApi.getSensorApi().delete(applicationId, entityId, sensorId);
 	}
 	
+	@Processor
 	public void createSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId, @Default("#[message.payload.sensorConfiguration]") Object sensorConfiguration){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		brooklynApi.getSensorApi().set(applicationId, entityId, sensorId, sensorConfiguration);
 	}
 	
@@ -150,38 +148,44 @@ public class BrooklynConnector {
 	/*
 	 * Catalog
 	 */
-	
+	@Processor
 	public List<CatalogItemSummary> getApplicationCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().listApplications(regularExpression, fragement);
 	}
 	
+	@Processor
 	public CatalogItemSummary getApplicationFromCatalog(@Default("#[message.payload.policyId]") String applicationId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().getApplication(applicationId, versionId);
 	}
 	
+	@Processor
 	public List<CatalogItemSummary> getPoliciesCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().listPolicies(regularExpression, fragement);
 	}
 	
+	@Processor
 	public CatalogItemSummary getPolicyFromCatalog(@Default("#[message.payload.policyId]") String policyId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().getPolicy(policyId, versionId);
 	}
 	
+	@Processor
 	public List<CatalogItemSummary> getEntitiesCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().listEntities(regularExpression, fragement);
 	}
 	
+	@Processor
 	public CatalogItemSummary getEntityFromCatalog(@Default("#[message.payload.policyId]") String entityId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
-		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getCatalogApi().getApplication(entityId, versionId);
+	}	
+	
+	@Processor
+	public int addItemToCatalog(@Default("#[message.payload]") String yaml){
+		return brooklynApi.getCatalogApi().create(yaml).getStatus();		
 	}
 	
-
-	
-	
+	@Processor
+	public void deleteEntry(@Default("#[message.payload.entryId]") String entryId,@Default("#[message.payload.versionId]") String versionId) throws Exception{
+		brooklynApi.getCatalogApi().deleteEntity(entryId, versionId);
+	}
+		
 }
