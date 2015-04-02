@@ -11,3 +11,4 @@ target
 credentials.properties
 /bin
 /target
+.factorypath
