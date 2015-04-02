@@ -15,9 +15,11 @@ import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.expressions.Lookup;
 import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.Optional;
 
 import brooklyn.rest.client.BrooklynApi;
 import brooklyn.rest.domain.ApplicationSummary;
+import brooklyn.rest.domain.CatalogItemSummary;
 import brooklyn.rest.domain.EntitySummary;
 import brooklyn.rest.domain.SensorSummary;
 
@@ -119,9 +121,67 @@ public class BrooklynConnector {
 	/*
 	 * Entity Sensors
 	 */
-	public List<SensorSummary> getSensorSummary(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId ){
+	public List<SensorSummary> getSensors(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId ){
 		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
 		return brooklynApi.getSensorApi().list(applicationId, entityId);
 	}
+	
+	public SensorSummary getSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return (SensorSummary) brooklynApi.getSensorApi().get(applicationId, entityId, sensorId, false);
+	}
 	 
+	public Object getSensorRawData(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getSensorApi().get(applicationId, entityId, sensorId, true);
+	}
+	
+	public void deleteSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		brooklynApi.getSensorApi().delete(applicationId, entityId, sensorId);
+	}
+	
+	public void createSensor(@Default("#[message.payload.applicationId]") String applicationId,@Default("#[message.payload.entityId]") String entityId, @Default("#[message.payload.sensorId]") String sensorId, @Default("#[message.payload.sensorConfiguration]") Object sensorConfiguration){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		brooklynApi.getSensorApi().set(applicationId, entityId, sensorId, sensorConfiguration);
+	}
+	
+	
+	/*
+	 * Catalog
+	 */
+	
+	public List<CatalogItemSummary> getApplicationCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().listApplications(regularExpression, fragement);
+	}
+	
+	public CatalogItemSummary getApplicationFromCatalog(@Default("#[message.payload.policyId]") String applicationId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().getApplication(applicationId, versionId);
+	}
+	
+	public List<CatalogItemSummary> getPoliciesCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().listPolicies(regularExpression, fragement);
+	}
+	
+	public CatalogItemSummary getPolicyFromCatalog(@Default("#[message.payload.policyId]") String policyId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().getPolicy(policyId, versionId);
+	}
+	
+	public List<CatalogItemSummary> getEntitiesCatalog(@Default("#[message.payload.regularExpression]") String regularExpression, @Default("#[message.payload.fragement]") String fragement ){
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().listEntities(regularExpression, fragement);
+	}
+	
+	public CatalogItemSummary getEntityFromCatalog(@Default("#[message.payload.policyId]") String entityId, @Default("#[message.payload.versionId]") String versionId) throws Exception{
+		BrooklynApi brooklynApi = connectionStrategy.getBrooklynAPI();
+		return brooklynApi.getCatalogApi().getApplication(entityId, versionId);
+	}
+	
+
+	
+	
 }
