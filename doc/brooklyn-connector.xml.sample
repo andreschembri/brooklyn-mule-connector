@@ -1,0 +1,3 @@
+<!-- BEGIN_INCLUDE(brooklyn:get-applications) -->
+    <brooklyn:get-applications config-ref="" />
+<!-- END_INCLUDE(brooklyn:get-applications) -->

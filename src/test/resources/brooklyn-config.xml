@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:brooklyn="http://www.mulesoft.org/schema/mule/brooklyn"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/brooklyn http://www.mulesoft.org/schema/mule/brooklyn/1.0/mule-brooklyn.xsd" version="EE-3.6.1">
+
+    <brooklyn:config-type name="config" username="foo" password="foo" doc:name="Brooklyn: Connection Managament type strategy"/>
+
+
+    
+    <flow name="testing123">
+        <brooklyn:get-applications config-ref="config" doc:name="Brooklyn"/>
+    </flow>
+</mule>

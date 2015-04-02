@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.cloudsoftcorp.mule.modules</groupId>
+    <artifactId>brooklyn-connector</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>mule-module</packaging>
+    <name>Mule Brooklyn Anypoint Connector</name>
+
+
+    <parent>
+        <groupId>org.mule.tools.devkit</groupId>
+        <artifactId>mule-devkit-parent</artifactId>
+        <version>3.6.1</version>
+    </parent>
+    
+    <dependencies>
+    <dependency>
+    <groupId>org.apache.brooklyn</groupId>
+    <artifactId>brooklyn-rest-client</artifactId>
+    <version>0.7.0-SNAPSHOT</version>
+    </dependency>
+    </dependencies>
+
+    <properties>
+        <category>Community</category>
+        <licensePath>LICENSE.md</licensePath>
+        <devkit.studio.package.skip>false</devkit.studio.package.skip>
+    </properties>
+    <repositories>
+            <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+</project>
