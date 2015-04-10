@@ -55,9 +55,3 @@
 <!-- BEGIN_INCLUDE(brooklyn:get-sensors) -->       
  <brooklyn:get-sensors config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn"  applicationId="#[message.payload.applicationId]" entityId="#[message.payload.entityId]"   />
 <!-- END_INCLUDE(brooklyn:get-sensors) -->
-
-
-
-
-          
-

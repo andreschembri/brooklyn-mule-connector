@@ -109,13 +109,7 @@ public class BrooklynConnector {
 			@Default("#[message.payload.regex]") String regex) {
 		List<EntitySummary> listOfEntities = brooklynApi.getApplicationApi().getDescendants(applicationId, regex);
 		
-		List<EntitySummary> serializableEntities = new ArrayList<EntitySummary>();
-	
-		for (EntitySummary entity : listOfEntities) {
-			serializableEntities.add(new EntitySummaryWorkAround(entity));
-		}
-		
-		return serializableEntities;
+		return listOfEntities;
 	}
 
 	/**
