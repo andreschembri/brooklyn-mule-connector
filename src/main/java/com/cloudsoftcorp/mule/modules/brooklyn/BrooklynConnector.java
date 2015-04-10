@@ -2,7 +2,6 @@
 
 package com.cloudsoftcorp.mule.modules.brooklyn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -22,7 +21,6 @@ import brooklyn.rest.domain.EntitySummary;
 import brooklyn.rest.domain.SensorSummary;
 import brooklyn.rest.domain.TaskSummary;
 
-import com.cloudsoftcorp.mule.module.workaround.EntitySummaryWorkAround;
 import com.cloudsoftcorp.mule.modules.brooklyn.datasense.ApplicationCatalogDatasense;
 import com.cloudsoftcorp.mule.modules.brooklyn.datasense.EntitiesCatalogDatasense;
 import com.cloudsoftcorp.mule.modules.brooklyn.datasense.PolicyCatalogDatasense;
