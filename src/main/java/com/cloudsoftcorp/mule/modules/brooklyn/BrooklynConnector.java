@@ -10,8 +10,10 @@ import javax.annotation.PostConstruct;
 import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
+import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.MetaDataKeyParam;
 
 import brooklyn.rest.client.BrooklynApi;
 import brooklyn.rest.domain.ApplicationSummary;
@@ -21,6 +23,9 @@ import brooklyn.rest.domain.SensorSummary;
 import brooklyn.rest.domain.TaskSummary;
 
 import com.cloudsoftcorp.mule.module.workaround.EntitySummaryWorkAround;
+import com.cloudsoftcorp.mule.modules.brooklyn.datasense.ApplicationCatalogDatasense;
+import com.cloudsoftcorp.mule.modules.brooklyn.datasense.EntitiesCatalogDatasense;
+import com.cloudsoftcorp.mule.modules.brooklyn.datasense.PolicyCatalogDatasense;
 import com.cloudsoftcorp.mule.modules.brooklyn.strategy.ConnectorConnectionStrategy;
 
 /**
@@ -38,17 +43,24 @@ public class BrooklynConnector {
 		return connectionStrategy;
 	}
 
-	public void setConnectionStrategy(
-			ConnectorConnectionStrategy connectionStrategy) {
+	public void setConnectionStrategy(ConnectorConnectionStrategy connectionStrategy) {
 		this.connectionStrategy = connectionStrategy;
 	}
 
 	BrooklynApi brooklynApi;
 
+	public BrooklynApi getBrooklynApi() {
+		return brooklynApi;
+	}
+
 	@PostConstruct
 	public void init() {
 		brooklynApi = connectionStrategy.getBrooklynAPI();
 	}
+	
+
+	
+
 
 	/**
 	 * Application API
@@ -266,12 +278,11 @@ public class BrooklynConnector {
 	 * @return java.util.List<CatalogItemSummary>
 	 */
 	@Processor
+	@MetaDataScope(ApplicationCatalogDatasense.class)
 	public CatalogItemSummary getApplicationFromCatalog(
-			@Default("#[message.payload.policyId]") String applicationId,
-			@Default("#[message.payload.versionId]") String versionId)
+			@MetaDataKeyParam String applicationId)
 			throws Exception {
-		return brooklynApi.getCatalogApi().getApplication(applicationId,
-				versionId);
+		return brooklynApi.getCatalogApi().getApplication(applicationId);
 	}
 
 	/**
@@ -297,12 +308,12 @@ public class BrooklynConnector {
 	 *
 	 * @return brooklyn.rest.domain.CatalogItemSummary
 	 */
+	@MetaDataScope(PolicyCatalogDatasense.class)
 	@Processor
 	public CatalogItemSummary getPolicyFromCatalog(
-			@Default("#[message.payload.policyId]") String policyId,
-			@Default("#[message.payload.versionId]") String versionId)
+			@MetaDataKeyParam String policyId)
 			throws Exception {
-		return brooklynApi.getCatalogApi().getPolicy(policyId, versionId);
+		return brooklynApi.getCatalogApi().getPolicy(policyId);
 	}
 
 	/**
@@ -320,6 +331,9 @@ public class BrooklynConnector {
 		return brooklynApi.getCatalogApi().listEntities(regularExpression, fragement);
 	}
 
+	
+	
+	
 	/**
 	 * Fetch an entity's definition from the catalog
 	 *
@@ -328,13 +342,15 @@ public class BrooklynConnector {
 	 *
 	 * @return brooklyn.rest.domain.CatalogItemSummary
 	 */
-	@Processor
+	@MetaDataScope(EntitiesCatalogDatasense.class)
+	@Processor 
 	public CatalogItemSummary getEntityFromCatalog(
-			@Default("#[message.payload.policyId]") String entityId,
-			@Default("#[message.payload.versionId]") String versionId)
+			 @MetaDataKeyParam String entityId)
 			throws Exception {
-		return brooklynApi.getCatalogApi().getApplication(entityId, versionId);
+		return brooklynApi.getCatalogApi().getEntity(entityId);
 	}
+	
+	
 
 	/**
 	 * Add a catalog item (e.g. new entity or policy type) by uploading YAML descriptor
@@ -346,6 +362,7 @@ public class BrooklynConnector {
 	 */
 	@Processor
 	public TaskSummary addItemToCatalog(@Default("#[message.payload]") String yaml) {
+		@SuppressWarnings("unchecked")
 		BaseClientResponse<TaskSummary> response = (BaseClientResponse<TaskSummary>) brooklynApi.getCatalogApi().create(yaml);		
 		return response.getEntity(TaskSummary.class);
 	}
@@ -360,10 +377,9 @@ public class BrooklynConnector {
 	 */
 	@Processor
 	public void deleteCatalogEntry(
-			@Default("#[message.payload.entryId]") String entryId,
-			@Default("#[message.payload.versionId]") String versionId)
+			@Default("#[message.payload.entryId]") String entryId)
 			throws Exception {
-		brooklynApi.getCatalogApi().deleteEntity(entryId, versionId);
+		brooklynApi.getCatalogApi().deleteEntity(entryId);
 	}
 
 }

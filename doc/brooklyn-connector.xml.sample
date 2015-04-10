@@ -26,7 +26,7 @@
 	<brooklyn:get-application-catalog config-ref="Brooklyn__Connection_Managament_type_strategy" fragement="#[message.payload.fragement]" regularExpression="#[message.payload.regularExpression]" />
 <!-- END_INCLUDE(brooklyn:get-application-catalog) -->        
 <!-- BEGIN_INCLUDE(brooklyn:get-application-from-catalog) -->       
-	<brooklyn:get-application-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy" applicationId="#[message.payload.policyId]" versionId="#[message.payload.versionId]" />
+	<brooklyn:get-application-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy" applicationId="#[message.payload.policyId]" />
 <!-- END_INCLUDE(brooklyn:get-application-from-catalog) -->     
 <!-- BEGIN_INCLUDE(brooklyn:get-applications) -->       
         <brooklyn:get-applications config-ref="Brooklyn__Connection_Managament_type_strategy" doc:name="Brooklyn"/>
@@ -38,16 +38,13 @@
         <brooklyn:get-entities-catalog config-ref="Brooklyn__Connection_Managament_type_strategy" fragement="#[message.payload.fragement]" regularExpression="#[message.payload.regularExpression]" doc:name="Brooklyn"/>
 <!-- END_INCLUDE(brooklyn:get-entities-catalog) -->
 <!-- BEGIN_INCLUDE(brooklyn:get-entity-from-catalog) -->       
-           <brooklyn:get-entity-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"  entityId="#[message.payload.policyId]" versionId="#[message.payload.versionId]" doc:name="Brooklyn"/>
+           <brooklyn:get-entity-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"  entityId="#[message.payload.policyId]" doc:name="Brooklyn"/>
 <!-- END_INCLUDE(brooklyn:get-entity-from-catalog) -->
 <!-- BEGIN_INCLUDE(brooklyn:get-policies-catalog) -->       
            <brooklyn:get-policies-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn" fragement="#[message.payload.fragement]" regularExpression="#[message.payload.regularExpression]"/>
 <!-- END_INCLUDE(brooklyn:get-policies-catalog) -->
-<!-- BEGIN_INCLUDE(brooklyn:get-policies-catalog) -->       
-           <brooklyn:get-policies-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn" fragement="#[message.payload.fragement]" regularExpression="#[message.payload.regularExpression]"/>
-<!-- END_INCLUDE(brooklyn:get-policies-catalog) -->
 <!-- BEGIN_INCLUDE(brooklyn:get-policy-from-catalog) -->       
- <brooklyn:get-policy-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn"  policyId="#[message.payload.policyId]" versionId="#[message.payload.versionId]" />
+ <brooklyn:get-policy-from-catalog config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn"  policyId="#[message.payload.policyId]" />
 <!-- END_INCLUDE(brooklyn:get-policy-from-catalog) -->
 <!-- BEGIN_INCLUDE(brooklyn:get-sensor) -->       
  <brooklyn:get-sensor config-ref="Brooklyn__Connection_Managament_type_strategy"    doc:name="Brooklyn" applicationId="#[message.payload.applicationId]" entityId="#[message.payload.entityId]" sensorId="#[message.payload.sensorId]" />
